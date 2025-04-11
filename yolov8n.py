@@ -43,7 +43,8 @@ if uploaded_file is not None:
 
             if st.button("✂️ 크롭 하기 (YOLO 자동 객체 중심)"):
                 # Load YOLOv8 model without weights_only argument
-                model = YOLO("yolov8n.pt")
+                model = YOLO()  # 빈 YOLO 객체 생성
+                model = model.load("yolov8n.pt", weights_only=False)  # 전체 모델 로드
                 results = model(file_path)
 
                 if len(results) == 0 or len(results[0].boxes) == 0:
