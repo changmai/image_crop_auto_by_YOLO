@@ -7,6 +7,7 @@ import math
 import torch
 from ultralytics import YOLO
 import cv2
+print("✅ OpenCV version:", cv2.__version__)
 import numpy as np
 
 st.set_page_config(page_title="이미지 자동 크롭기", layout="centered")
