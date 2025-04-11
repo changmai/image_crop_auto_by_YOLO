@@ -6,6 +6,9 @@ import numpy as np
 from ultralytics import YOLO
 import torch
 import cv2
+from ultralytics.nn.tasks import DetectionModel
+
+torch.serialization.add_safe_globals([DetectionModel])
 
 st.set_page_config(page_title="이미지 자동 크롭기", layout="centered")
 st.title("📐 이미지 자동 크롭 + 분할 (YOLO 기반)")
