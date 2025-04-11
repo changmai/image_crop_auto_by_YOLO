@@ -42,8 +42,8 @@ if uploaded_file is not None:
             st.markdown(f"🔍 자동 계산된 세로 크기: **{crop_height}px** (비율 {ratio_w}:{ratio_h})")
 
             if st.button("✂️ 크롭 하기 (YOLO 자동 객체 중심)"):
-                # Load YOLOv8 model with full loading (not just weights)
-                model = YOLO("yolov8n.pt", weights_only=False)
+                # Load YOLOv8 model without weights_only argument
+                model = YOLO("yolov8n.pt")
                 results = model(file_path)
 
                 if len(results) == 0 or len(results[0].boxes) == 0:
