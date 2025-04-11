@@ -5,6 +5,7 @@ import tempfile
 import numpy as np
 from ultralytics import YOLO
 import torch
+import cv2
 
 st.set_page_config(page_title="이미지 자동 크롭기", layout="centered")
 st.title("📐 이미지 자동 크롭 + 분할 (YOLO 기반)")
@@ -42,12 +43,10 @@ if uploaded_file is not None:
             st.markdown(f"🔍 자동 계산된 세로 크기: **{crop_height}px** (비율 {ratio_w}:{ratio_h})")
 
             if st.button("✂️ 크롭 하기 (YOLO 자동 객체 중심)"):
-                # Load YOLOv8 model without weights_only argument
-                model = YOLO()  # 빈 YOLO 객체 생성
-                model = model.load("yolov8n.pt", weights_only=False)  # 전체 모델 로드
+                model = YOLO("yolov8n.pt")  # 신뢰된 사전학습 모델 사용 가정
                 results = model(file_path)
 
-                if len(results) == 0 or len(results[0].boxes) == 0:
+                if not results or results[0].boxes is None or len(results[0].boxes) == 0:
                     st.warning("객체를 인식하지 못했습니다. 이미지 중앙을 기준으로 크롭합니다.")
                     center_x, center_y = img_width // 2, img_height // 2
                 else:
