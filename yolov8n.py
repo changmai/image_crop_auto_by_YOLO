@@ -2,13 +2,9 @@ import os
 import streamlit as st
 from PIL import Image
 import tempfile
-import zipfile
-import math
-import torch
-from ultralytics import YOLO
-import cv2
-print("✅ OpenCV version:", cv2.__version__)
 import numpy as np
+from ultralytics import YOLO
+import torch
 
 st.set_page_config(page_title="이미지 자동 크롭기", layout="centered")
 st.title("📐 이미지 자동 크롭 + 분할 (YOLO 기반)")
@@ -34,7 +30,7 @@ if uploaded_file is not None:
             f.write(uploaded_file.read())
 
         try:
-            img = Image.open(file_path)
+            img = Image.open(file_path).convert("RGB")
             img_width, img_height = img.size
             st.success(f"✅ 현재 이미지 해상도: {img_width} x {img_height} px")
 
@@ -46,14 +42,14 @@ if uploaded_file is not None:
             st.markdown(f"🔍 자동 계산된 세로 크기: **{crop_height}px** (비율 {ratio_w}:{ratio_h})")
 
             if st.button("✂️ 크롭 하기 (YOLO 자동 객체 중심)"):
-                # Load YOLOv8
-                model = YOLO("yolov8n.pt")
+                # Load YOLOv8 model with full loading (not just weights)
+                model = YOLO("yolov8n.pt", weights_only=False)
                 results = model(file_path)
+
                 if len(results) == 0 or len(results[0].boxes) == 0:
                     st.warning("객체를 인식하지 못했습니다. 이미지 중앙을 기준으로 크롭합니다.")
                     center_x, center_y = img_width // 2, img_height // 2
                 else:
-                    # 가장 큰 box 선택
                     boxes = results[0].boxes.xyxy.cpu().numpy()
                     areas = [(x2 - x1) * (y2 - y1) for x1, y1, x2, y2 in boxes]
                     biggest = boxes[np.argmax(areas)]
